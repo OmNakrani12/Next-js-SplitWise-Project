@@ -15,7 +15,7 @@ export async function getDB(email){
     }
     catch(e){
         console.error("Error creating DB : " + e);
-        throw e; // Re-throw the error for proper error handling
+        throw e;
     }
 }
 
