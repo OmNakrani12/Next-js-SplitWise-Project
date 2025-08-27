@@ -12,6 +12,7 @@ export default function Groups() {
   const [openName, setOpenName] = useState("");
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [groupTotal, setGroupTotal] = useState([]);
   const router = useRouter();
 
   async function loadGroups() {
@@ -20,9 +21,12 @@ export default function Groups() {
       if (!res.ok) return;
       const data = await res.json();
       console.log(data);
-      if (data.success) setGroups(data.groups_data);
-      console.log(data.groups_data);
-      console.log(groups);
+      if (data.success){
+        setGroups(data.groups_data.groups);
+        setGroupTotal(data.groups_data.group_total);
+        console.log(data.groups_data.group_total);
+      };
+      console.log(groups)
     } catch (e) {
       console.error("Failed to load groups:", e);
     }
@@ -121,6 +125,7 @@ export default function Groups() {
               groups.map((g, i) => {
                 const displayName = typeof g === "string" ? g.replace(/^group_/, "") : g?.name || "";
                 const key = (typeof g === "string" ? g : g?._id) || i;
+                const expense = typeof groupTotal[i] === "number" ? parseFloat(groupTotal[i]).toFixed(2) : 0;
                 return (
                   <li
                     key={key}
@@ -128,11 +133,28 @@ export default function Groups() {
                       setOpen(true);
                       setOpenName(displayName)
                     }}
-                    className="shadow-lg rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition transform hover:-translate-y-1"
+                    className="grid justify-between shadow-lg rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition transform hover:-translate-y-1"
                   >
                     <h2 className="text-xl text-gray-500">
                       {displayName}
                     </h2>
+                    <div className="text-start">
+                      {
+                        expense < 0 ? (
+                          <>
+                            <h3 className="text-red-500">You owe {parseFloat(expense * -1).toFixed(2)}</h3>
+                          </>
+                        ) : (
+                          <>
+                            {expense == 0 ? (
+                              <h3 className="text-gray-500">Settled Up</h3>
+                            ) : (
+                              <h3 className="text-green-500">You are owed {expense}</h3>
+                            )}
+                          </>
+                        )
+                      }
+                    </div>
                   </li>
                 );
               })

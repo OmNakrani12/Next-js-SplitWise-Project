@@ -6,7 +6,7 @@ export async function getDB(email){
     try{
         let db = `db_${email.replace(/[@.]/g, "_")}`;
         if(!connections[db]){
-            connections[db] = await mongoose.createConnection(`${process.env.URI}/${db}`, { 
+            connections[db] = await mongoose.createConnection(`${process.env.URI}/${db}`, {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             });
