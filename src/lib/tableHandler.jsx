@@ -7,8 +7,8 @@ export async function getDB(email){
         let db = `db_${email.replace(/[@.]/g, "_")}`;
         if(!connections[db]){
             connections[db] = await mongoose.createConnection(`${process.env.URI}/${db}`, { 
-                useNewUrlParser: true, 
-                useUnifiedTopology: true 
+                useNewUrlParser: true,
+                useUnifiedTopology: true
             });
         }
         return connections[db];
@@ -25,10 +25,17 @@ const recordSchema = new mongoose.Schema({
     date: {type: Date, default: Date.now},
     paid: {type: Boolean, default: false}
 });
+const notificationSchema = new mongoose.Schema({
+    name: {type: String, required: true, unique: true},
+    email: {type: String, required: true}
+});
 
-export async function getGroupCollection(email, groupName){
+export async function getGroupCollection(email, groupName, isNotification = false){
     try {
         const connection = await getDB(email);
+        if(isNotification){
+            return connection.models["notifications"] || connection.model("notifications", notificationSchema)
+        }
         const collectionName = `group_${groupName.replace(/\W/g, "_")}`;
         return connection.models[collectionName] || connection.model(collectionName, recordSchema, collectionName);
     } catch (error) {

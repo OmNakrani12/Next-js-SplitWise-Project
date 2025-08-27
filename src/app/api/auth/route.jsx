@@ -17,7 +17,7 @@ export async function POST(request){
         }
         process.env.EMAIL = email;
         process.env.URL = url;
-        const recordModel = await getGroupCollection(email, "JayShreeRam");
+        const recordModel = await getGroupCollection(email, "notifications", false);
         return NextResponse.json({email, url});
     }
     catch(e){
