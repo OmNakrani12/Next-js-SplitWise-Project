@@ -28,10 +28,11 @@ export default function GoogleLogin() {
         const userData = await user.json();
         localStorage.setItem("email", result.user.email);
         localStorage.setItem("url", result.user.photoURL);
-        console.log("Authentication successful:", userData);
+        localStorage.setItem("name", result.user.displayName);
+        console.log("Authentication successful:", result);
         router.push("/groups");
       } else {
-        console.error("Authentication failed:", user.status);
+        console.log("Authentication failed:", user.status);
       }
     } catch (error) {
       console.error("Error during sign in:", error);

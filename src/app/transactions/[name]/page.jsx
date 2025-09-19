@@ -33,7 +33,7 @@ export default function Transactions({name}){
     return (
         <div className="fixed inset-0 bg-black/25 flex items-end justify-center">
             <div className="bg-white rounded-xl shadow-lg p-6 w-[50%] h-[90%] mb-4">
-                <section className="flex justify-between">
+                <section className="flex justify-between bg-gray-200 p-3 w-[100%]">
                     <ul className="flex gap-2">
                         <li></li>
                         <li className="font-bold text-2xl">{name}</li>
@@ -87,8 +87,10 @@ export default function Transactions({name}){
                 </main>
             </div>
             {open && (
-                <div className="fixed inset-0 bg-black/25 flex items-end justify-center">
-                    <AddExpensePage groupName={name} onClose={() => setOpen(false)} />
+                <div className="flex items-end justify-center">
+                    <div className="bg-white rounded-xl shadow-lg p-6 w-[50%] h-[90%] mb-4">
+                        <AddExpensePage groupName={name} onClose={() => setOpen(false)} />
+                    </div>
                 </div>
             )}
         </div>

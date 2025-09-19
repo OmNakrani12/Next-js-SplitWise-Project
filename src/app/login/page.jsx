@@ -6,30 +6,59 @@ import { auth } from "../firebase/config";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import GoogleLogin from "../firebase/google";
+import Cookies from "js-cookie";
+import jwt from "jsonwebtoken";
 export default function LoginPage() {
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
   const router = useRouter();
-  
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
+  const type = "login";
 
   const handleSubmit = async(e) => {
     e.preventDefault();
     if(!email || !password){
-      alert("Fields Are Empty!");
+      alert("Fields are empty!");
       return;
     }
     try{
-      const res = await createUserWithEmailAndPassword(email, password);
-      console.log(res);
+      // const res = await createUserWithEmailAndPassword(email, password);
+      const response = await fetch("api/users/",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({email, password, type}),
+        credentials : "include",
+      })
+      const resData = await response.json();
+      if(resData.data == "Incorrect"){
+        alert("Incorrect password!");
+        return;
+      }
+      else if(resData.data == "notExist"){
+        router.push('/register');
+        alert("You have not an account!");
+        return;
+      }
       setEmail('');
       setPassword('');
-      router.push('/');
+      if(response.ok){
+        router.push('/');
+      }
+      else{
+        alert("Login Failed");
+      }
     }
     catch(e){
       console.error(e);
     }
   }
+  useEffect(() => {
+    const token = Cookies.get("appToken");
+    console.log("Token:", token);
+    if(token){
+      router.push('/');
+    }
+  },[]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
@@ -64,9 +93,22 @@ export default function LoginPage() {
               placeholder="Enter your password"
             />
           </div>
-            <button className="flex mx-auto bg-blue-500 text-white border rounded-lg px-6 py-2 ">Submit</button>
+          <div className="flex justify-center">
+            <button className="flex w-[90%] justify-center bg-blue-500 text-white border rounded-lg px-6 py-2 hover:bg-blue-600">Submit</button>
+          </div>
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="text-sm text-gray-500">or</span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
         </form>
         <GoogleLogin/>
+        <div className="flex justify-center gap-1">
+          <span>Don't have an account?</span>
+          <Link href="/register" className="text-blue-500 hover:underline">
+            Create an account
+          </Link>
+        </div>
       </div>
     </div>
   );

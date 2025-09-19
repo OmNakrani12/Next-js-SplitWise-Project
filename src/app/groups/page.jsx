@@ -15,6 +15,10 @@ export default function Groups() {
   const [groupTotal, setGroupTotal] = useState([]);
   const router = useRouter();
 
+  let testEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
   async function loadGroups() {
     try {
       const res = await fetch("/api/groups", { method: "GET" });
@@ -57,7 +61,6 @@ export default function Groups() {
 
       if (response.ok) {
         await response.json();
-        // Refresh groups list to keep data shape consistent with GET response
         await loadGroups();
         reloadNotifications();
         setGroupName("");
@@ -109,7 +112,7 @@ export default function Groups() {
               type="submit"
               disabled={loading || !groupName.trim()}
               className={`w-full px-6 py-3 text-white font-medium rounded-lg transition-colors ${
-                loading || !groupName.trim()
+                loading || !groupName.trim() || !testEmail(joinEmail.trim())
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
               }`}

@@ -25,7 +25,7 @@ export async function GET(){
         const email = process.env.EMAIL;
         const data = await getDB(email);
         const notifications = await data.db.collection("notifications").find({}).toArray();
-        return NextResponse.json({ success: true, notifications: notifications});
+        return NextResponse.json({ success: true, notifications: notifications, length: notifications.length});
     }
     catch(e){
         return NextResponse.json({ message: e.message},{status: 500});

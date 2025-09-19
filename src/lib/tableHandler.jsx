@@ -10,6 +10,7 @@ export async function getDB(email){
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             });
+            await connections[db].asPromise();
         }
         return connections[db];
     }
